@@ -1,0 +1,32 @@
+@startuml 0/hld-issuance
+title Attestation issuance
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Person(user, "Holder")
+Component(wallet, "Wallet")
+Component_Ext(issuer, "Issuer")
+
+== Attestation Issuance ==
+Rel(issuer, wallet, "initiate issuance (Attestation Offer)")
+BiRel(user, issuer, "authentication & consent")
+BiRel(wallet, issuer, "wallet authentication with Wallet Attestation")
+'Rel(issuer, issuer, "verify Wallet Attestation")
+'Rel(issuer, wallet, "challenge")
+Rel(wallet, wallet, "craft PoP")
+Rel(wallet, issuer, "request attestation (PoP)")
+Rel(issuer, issuer, "verify PoP")
+Rel(issuer, issuer, "bind Holder public key to (Q)EAA")
+Rel(issuer, wallet, "(Q)EAA")
+Rel(wallet, wallet, "verify and save (Q)EAA")
+
+@enduml

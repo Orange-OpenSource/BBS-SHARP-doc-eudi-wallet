@@ -1,0 +1,49 @@
+@startuml 1/wallet-attestation-references-presentation
+title Wallet and WSCDs references in attestations - presentation
+
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component(wallet, "Wallet")
+Component(verifier, "Verifier")
+Component(issuerWA, "Wallet attestation \n revocation registry", "accumulator")
+Component(issuerWSCD, "WSCD revocation \n registry", "accumulator")
+
+note over wallet
+| Attestation | claims1=//digest_claims1//, ... , \n walletAttestationId=//wallet_attestation_id//, \n wscd=//holder_secret_WSCD_reference// |
+| Signature | <math>signature_("issuer")</math> |
+| Disclosures | //disclosure_of_claims1// ... |
+end note
+
+== Attestation presentation ==
+BiRel(wallet, verifier, "presentation process")
+BiRel(wallet, issuerWA, "Get delta")
+BiRel(wallet, issuerWSCD, "Get delta")
+Rel(wallet, wallet, "Update accumulators states and witnesses with deltas")
+Rel(wallet, wallet, "Generate values commitments")
+Rel(wallet, wallet, "Generate //walletAttestationNonRevocationZKP//")
+Rel(wallet, wallet, "Generate //WSCDNonRevocationZKP//")
+Rel(wallet, wallet, "Generate presentation")
+note over wallet
+presentation =
+| Attestation | claims1=//digest_claims1//, ... , \n walletAttestationId=//<staticValue>//, \n wscd=//<staticValue>// |
+| Signature | <math>signature_("issuer")</math> \n WalletAttestation : //Commitment// + //UndisclosedZKP// + //NonRevocationZKP// \n wscd : //Commitment// + //UndisclosedZKP// + //NonRevocationZKP// |
+| Disclosures | //disclosure_of_claims1// ... |
+presentation signature = <math>signature_("holder")</math>
+end note
+
+Rel(wallet, verifier, "Share presentation")
+BiRel(verifier, issuerWA, "Verify NonRevocationZKP(walletAttestationNonRevocationZKP)")
+BiRel(verifier, issuerWSCD, "Verify NonRevocationZKP(WSCDNonRevocationZKP)")
+Rel(verifier, verifier, "Verify presentation and extract claims")
+
+@enduml

@@ -1,0 +1,110 @@
+@startuml 1/presentation
+title Attestation presentation flow
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+
+skinparam ParticipantPadding 60
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+skinparam useBetaStyle true
+<style>
+    sequenceDiagram {
+        participant {
+            BackgroundColor #85BBF0
+            FontStyle bold
+            LineColor #85BBF0
+        }
+        box {
+            LineColor lightgrey
+        }
+    }
+</style>
+
+actor "holder" as h
+
+box "WALLET ENV" #White
+    participant "WSCD" as wscd
+    participant "Wallet" as w
+end box
+
+participant "Verifier" as v
+participant "Attestation Issuer" as i
+participant "WalletAttestation\n revocation registry" as wp
+participant "WSCD revocation registry" as wr
+participant "Expiration date registry" as exp
+
+group #LightGrey Initial state 
+    /note over wscd
+        <math>pk</math>&<math>sk_(holder)</math> (ECSDSA)
+    end note
+    /note over w
+        <math>"Attestation"</math>
+    end note
+    /note over i
+        <math>"Accumulator"</math>(list of revoked attestations)
+    end note
+    /note over wp
+        <math>"Accumulator"</math>(list of revoked wallet attestations)
+    end note
+    /note over wr
+        <math>"Accumulator"</math>(list of revoked WSCD)
+    end note
+    /note over exp
+        <math>"Accumulator"</math>(list of expired dates)
+    end note
+end group
+
+Rel(v, w, "Presentation request(//nonce//)")
+
+== Randomize the presented attestation ==
+Rel(w, w, "Generate random for holder pk = //r_holder//")
+Rel(w, w, "Randomize //pk<sub>holder</sub>// with //r_holder// = //pk_blind<sub>holder</sub>//")
+Rel(w, w, "Generate random for presentation = //r_issuer//")
+Rel(w, w, "Randomize the attestation issuer signature with //r_issuer// = //blind_signature<sub>issuer</sub>//")
+group foreach attestation claims
+alt if the claim is not disclosed
+    Rel(w, w, "Replace digest by a static value and generate the corresponding commitment")
+end alt
+end group
+group foreach attestation trackable attribute (id, exp...)
+    Rel(w, w, "Replace by a static value and generate the corresponding commitment")
+end group
+Rel(w, w, "Replace holder pk reference in the attestation by pk_blind<sub>holder</sub>//")
+Rel(w, w, "Generate a global ZKP that prove the anonymized attestation integrity = //attestation_integrity_ZKP//")
+
+== Generate non-revocation and non-expiration proofs ==
+Rel(w, w, "Generate a randomized //non_attestation_expiration_zkp//")
+BiRel(w, i, "Get delta")
+BiRel(w, wp, "Get delta")
+BiRel(w, wr, "Get delta")
+Rel(w, w, "Update accumulators states and witnesses with deltas")
+Rel(w, w, "Generate a randomized//non_attestation_revocation_zkp//")
+Rel(w, w, "Generate a randomized //non_wallet_attestation_revocation_zkp//")
+Rel(w, w, "Generate a randomized //non_WSCD_revocation_zkp//")
+Rel(w, w, "Refresh the attestation with all generated elements = //refreshed_attestation// ")
+
+== Craft the presentation ==
+Rel(w, w, "Craft the //presentation// including the //refreshed_attestation// and the //nonce//")
+Rel(w, wscd, "sign //presentation//")
+BiRel(h, wscd, "Auth")
+Rel(wscd, w, "//signature<sub>holder</sub>//")
+Rel(w, w, "Randomize the //signature<sub>holder</sub>// with //r_holder// = //blind_signature<sub>holder</sub>//")
+Rel(w, w, "Generate key binding proof = //key_binding_ZKP//")
+
+== Share the presentation ==
+Rel(w, v, "//presentation// with //blind_signature<sub>holder</sub>//")
+Rel(v, v, "Verify attestation integrity proof")
+BiRel(v, exp, "Get proof of validity of //non_attestation_expiration_zkp//")
+BiRel(v, wr, "Get proof of validity of //non_WSCD_revocation_zkp//")
+BiRel(v, wp, "Get proof of validity of //non_wallet_attestation_revocation_zkp//")
+BiRel(v, i, "Get proof of validity of //non_attestation_revocation_zkp//")
+BiRel(v, i, "Get proof of validity of //blind_signature<sub>issuer</sub>//")
+Rel(v, v, "Verify proofs of validity")
+
+@enduml

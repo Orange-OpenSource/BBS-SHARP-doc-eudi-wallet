@@ -1,0 +1,27 @@
+@startuml 0/hld-presentation
+title Attestation presentation
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Person(user, "Holder")
+Component(wallet, "Wallet")
+Component_Ext(verifier, "Verifier")
+
+== Attestation Presentation ==
+Rel(verifier, wallet, "initiate presentation (Presentation Definition)")
+BiRel(user, wallet, "authentication & consent")
+Rel(user, wallet, "select attributes to disclose")
+Rel(wallet, wallet, "craft Presentation")
+Rel(wallet, verifier, "share Presentation")
+Rel(verifier, verifier, "verify Presentation")
+Rel(verifier, wallet, "status")
+@enduml

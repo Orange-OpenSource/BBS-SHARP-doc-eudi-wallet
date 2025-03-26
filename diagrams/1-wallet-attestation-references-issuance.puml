@@ -1,0 +1,49 @@
+@startuml 1/wallet-attestation-references-issuance
+title Wallet and WSCDs references in attestations - issuance
+
+skinparam ParticipantPadding 120
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component(walletp, "Wallet provider")
+Component(wallet, "Wallet")
+Component(issuer, "Issuer")
+
+== Wallet Onboarding ==
+BiRel(walletp, wallet, "Provide a wallet attestation to the holder")
+note over wallet
+| WalletAttestation | id=//wallet_attestation_id// \n wscd=//holder_secret_WSCD_reference// |
+| Signature | <math>signature_("wallet provider")</math> |
+end note
+
+== Attestation issuance ==
+Rel(wallet, wallet, "Generate and sign //wallet_attestation_presentation//")
+note over wallet
+presentation =
+| WalletAttestation | id=//wallet_attestation_id// \n wscd=//holder_secret_WSCD_reference// |
+| Signature | <math>signature_("wallet provider")</math> |
+presentation signature = <math>signature_(holder)</math> 
+end note
+
+BiRel(wallet, issuer, "Authorize code flow (PAR) \nwith client authentication based on //wallet_attestation_presentation// \nreturn //accessToken//")
+Rel(wallet, wallet, "Generate proof of possession of the holder secret = //PoP//")
+Rel(wallet, issuer, "Get attestation (//PoP//)")
+Rel(issuer, issuer, "Check the link between //PoP// <-> //WalletAttestation//")
+Rel(issuer, issuer, "Generate //attestation//")
+note over issuer
+| Attestation | claims1=//digest_claims1//, ... , \n walletAttestationId=//wallet_attestation_id//, \n wscd=//holder_secret_WSCD_reference// |
+| Signature | <math>signature_("issuer")</math> |
+| Disclosures | //disclosure_of_claims1//, ... |
+end note
+Rel(issuer, wallet, "Attestation")
+
+@enduml

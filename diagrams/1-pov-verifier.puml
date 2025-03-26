@@ -1,0 +1,27 @@
+@startuml 1/pov-verifier
+title Verifier obtain the signature validity proofs from the Issuer
+
+skinparam ParticipantPadding 100
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component(wallet, "Wallet")
+Component(verifier, "Verifier", "verifier")
+Component(issuer, "Issuer", "prover")
+
+Rel(verifier, wallet, "Presentation request")
+Rel(wallet, verifier, "Send presentation")
+Rel(verifier, verifier, "Get attestation issuer signature in presentation : blind_signature<sub>Issuer</sub>")
+Rel(verifier, issuer, "request PoV_of_issuer_signature (blind_signature<sub>Issuer</sub>)")
+Rel(issuer, issuer, "check blind_signature<sub>Issuer</sub>")
+Rel(issuer, verifier, "//PoV_of_issuer_signature//")
+Rel(verifier, verifier, "check blind_signature<sub>Issuer</sub> validity with //PoV_of_issuer_signature//")
+
+@enduml

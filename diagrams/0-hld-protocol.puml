@@ -1,0 +1,25 @@
+@startuml 0/hld-protocol
+
+title EUDI Wallet protocols & formats
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+HIDE_STEREOTYPE()
+
+System(pid_provider, "PID Provider", "Issues PID")
+System(issuer, "Issuer", "Issues (Q)EAA")
+System(wallet_provider, "Wallet provider", "Issues Wallet Attestation")
+System(wallet, "EUDI Wallet", "Shares PID, (Q)EAA")
+System(verifier, "Verifier", Verifies (Q)EAA)
+
+Lay_D(pid_provider, issuer)
+
+Rel(wallet_provider, wallet, "OpenID4VCI", "SD-JWT, MSO")
+Rel_Right(pid_provider, wallet, "OpenID4VCI", "SD-JWT, MSO")
+Rel_Right(issuer, wallet, "OpenID4VCI", "SD-JWT, MSO")
+Rel_R(wallet, verifier, "OpenID4VP \n ISO/IEC 18013-5", "SD-JWT, MSO")
+
+
+@enduml

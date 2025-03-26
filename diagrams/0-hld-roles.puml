@@ -1,0 +1,44 @@
+@startuml 0/hld-roles
+
+title EUDI Wallet environment
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+HIDE_STEREOTYPE()
+
+System_Boundary(pid, "") {
+    System(pid_provider, "Person Identification Data Provider", "PID issuer")
+    Container(wscdpid, "QSCD", "PID provider secret keys")
+}
+System_Boundary(wp, "") {
+    System(wallet_provider, "Wallet provider", "wallet attestation Issuer")
+    Container(wscdwp, "QSCD", "Wallet provider secret keys")
+}
+System_Boundary(citizen, "") {
+    Person(user, "Citizen", "")
+    System(wallet, "EUDI Wallet", "Wallet")
+    Container(wscduser, "WSCD", "Holder secret key")
+}
+System_Boundary(iss, "") {
+    System(issuer, "Issuer", "QEAA/EAA issuer")
+    Container(wscdiss, "QSCD", "Issuer secret keys")
+}
+System_Boundary(verif, "") {
+    System(verifier, "Verifier", "Service provider")
+    Container(wscdv, "QSCD", "Verifier secret keys")
+}
+
+Rel(wallet_provider, wallet, "issue Wallet Attestation")
+Rel_Right(pid_provider, wallet, "issue PID")
+Rel_Right(issuer, wallet, "issue \n attestation")
+Rel(wallet, verifier, "share attestations")
+Rel(user, wallet, "uses")
+Rel(wallet, wscduser, "uses")
+Rel_Left(pid_provider, wscdpid, "uses")
+Rel_Right(wallet_provider, wscdwp, "uses")
+Rel_Right(issuer, wscdiss, "uses")
+Rel_Right(verifier, wscdv, "uses")
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml 1/accumulator-revocation
+title Non-revocation proof with accumulators
+
+skinparam ParticipantPadding 100
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component(wallet, "Wallet")
+Component(verifier, "Verifier")
+Component(registry, "Issuer", "Revocation registry")
+
+BiRel(wallet, verifier, "presentation process")
+Rel(wallet, wallet, "Retrieve //walletAccumulatorState// corresponding to the attestation")
+
+alt wallet is online
+Rel(wallet, registry, "Get up to date state (//walletAccumulatorState//)")
+Rel(registry, wallet, "//delta// + //upToDateAccumulatorState//")
+
+else wallet is offline
+Rel(wallet, verifier, "get accumulator delta (//issuerRevocationRegistry//, //walletAccumulatorState//)")
+Rel(verifier, registry, "Get up to date state (//walletAccumulatorState//)")
+Rel(registry, verifier, "//delta// + //upToDateAccumulatorState//")
+Rel(verifier, wallet, "//delta// + //upToDateAccumulatorState//")
+end
+
+Rel(wallet, wallet, "update //witness// with //delta// = //upToDateWitness//")
+Rel(wallet, wallet ,"Store the the up to date //upToDateAccumulatorState// and //upToDateWitness// with the attestation")
+Rel(wallet, wallet, "Generate //nonRevocationZkp//")
+Rel(wallet, verifier, "Share presentation (//VP// + //nonRevocationZkp//")
+Rel(verifier, registry, "Get proof of validity (//nonRevocationZkp//, //maxDelay//)")
+Rel(registry, registry, "check //nonRevocationZkp//")
+Rel(registry, verifier, "//nonRevocationValidityProof//")
+Rel(verifier, verifier, "verify //nonRevocationZkp// with //nonRevocationValidityProof//")
+
+@enduml

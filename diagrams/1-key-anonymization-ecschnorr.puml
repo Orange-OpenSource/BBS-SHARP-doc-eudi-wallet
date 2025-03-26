@@ -1,0 +1,66 @@
+@startuml 1/key-anonymization-ecschnorr
+title Holder public key and signature randomization - EC-Schnorr
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component(wallet, "Wallet")
+Component(se, "WSCD")
+
+note over se
+| Public | <math>g, pk=(g)^(sk)</math> |
+| Private | <math>sk</math> |
+end note
+/note over wallet
+| Public | <math>(pk, g)</math> |
+end note
+
+Rel(wallet, wallet, "prepare data do sign")
+Rel(wallet, se, "sign data")
+Rel(se, se, "make an EC-SDSA signature on //data// using sk")
+
+'note right se
+'| 1. Choose | <math>omega in [1,p]</math> |
+'| 2. Compute | <math>T = (g)^omega</math> |
+'| 3. Compute | <math>c = H(T, data)</math> |
+'| 4. Compute | <math>rho = omega+c.sk(mod p)</math> |
+'| 5. Let | <math>sigma = (c, rho)</math> |
+'end n'ote
+
+'Rel(se, wallet, "holder_signature", "<math>sigma</math>")
+Rel(se, wallet, "signature")
+note over wallet
+**signature** is an EC-SDSA signature on **data** that can be verified with **pk**
+end note
+
+'Rel(wallet, c, "blind signature (holder_signature, holder_pk)")
+
+Rel(wallet, wallet, "generate random r")
+'note right wallet
+'| Choose | <math>r in [1,p]</math> |
+'end note
+
+Rel(wallet, wallet, "blind public key: pk<sup>blind</sup>")
+note right wallet
+| Compute | <math>pk^(bl i nd) = pk.(g)^r = (g)^(sk+r)</math> |
+end note
+Rel(wallet, wallet, "blind signature : signature<sup>blind</sup>")
+'note right c
+'| Compute | <math>rho_b = rho + c.r.(modp)</math> |
+'| Let | <math>sigma_b = (c, rho_b)</math> |
+'end note
+
+'Rel(c, wallet, "blind_holder_signature, blind_holder_pk", "<math>sigma_b, pk_b</math>")
+'Rel(c, wallet, "blind_holder_signature, blind_holder_pk")
+note over wallet
+<color:orange> **signature<sup>blind</sup>** </color>is an EC-SDSA signature on **data** that can be verified with <color:orange>**pk<sup>blind</sup>**</color>
+end note
+@enduml

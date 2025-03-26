@@ -1,0 +1,49 @@
+@startuml 0/hld-init-overview
+title Wallet onboarding
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Person(user, "Holder")
+Component(wallet, "Wallet")
+Component_Ext(wp, "Wallet Provider")
+Component_Ext(pp, "PID Provider")
+
+== Wallet initialization ==
+Rel(user, wallet, "start the wallet initialization")
+Rel(wallet, wallet, "wallet environment check")
+BiRel(user, wallet, "authentication factors setup")
+Rel(wallet, wallet, "generate Holder key pair")
+note over wallet #E8833A
+Wallet instance state :
+INSTALLED
+end note
+
+== Wallet activation ==
+BiRel(user, wp, "Holder enrollment & authentication")
+Rel(wallet, wp, "start the Wallet Attestation issuance", "app attestation, key attestation")
+Rel(wp, wallet, "Wallet Attestation")
+note over wallet #F7C325
+Wallet instance state :
+OPERATIONAL
+end note
+
+== PID Issuance ==
+BiRel(user, pp, "Holder identification & authentication")
+Rel(wallet, pp, "start the PID issuance")
+BiRel(wallet, pp, "wallet authentication with Wallet Attestation")
+Rel(pp, wallet, "PID")
+note over wallet #207868
+Wallet instance state :
+VALID
+end note
+
+@enduml

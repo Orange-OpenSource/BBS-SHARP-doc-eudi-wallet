@@ -1,0 +1,17 @@
+@startuml 1/zkp-key-binding
+title Description of presentation signature
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+HIDE_STEREOTYPE()
+
+
+Component_Ext(signature, "Presentation signature", "") {
+    Component(proof1, "Randomized presentation holder signature", "blind_signature<sub>holder</sub>")
+    Component(proof2, "Proof of the key binding", "key_binding_ZKP")
+}
+@enduml
+

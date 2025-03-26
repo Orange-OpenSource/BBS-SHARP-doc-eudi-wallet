@@ -1,0 +1,21 @@
+@startuml 1/zkp-attestation
+title Description of attestation signature
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+HIDE_STEREOTYPE()
+
+
+Component_Ext(signature, "Attestation signature", "") {
+    Component(proof1, "Randomized attestation issuer signature", "blind_signature<sub>issuer</sub>")
+    Component(proof2, "Proof of the attestation integrity", "attestation_integrity_ZKP")
+    Component(proof3, "Proof of attestation non-revocation", "non_attestation_revocation_zkp")
+    Component(proof4, "Proof of attestation non-expiration", "non_attestation_expiration_zkp")
+    Component(proof5, "Proof of non-revocation of the WSCD referenced in the attestation", "non_WSCD_revocation_zkp")
+    Component(proof6, "Proof of non-revocation of the Wallet referenced in the attestation", "non_wallet_attestation_revocation_zkp")
+}
+@enduml
+

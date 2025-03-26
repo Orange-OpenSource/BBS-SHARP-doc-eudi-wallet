@@ -1,0 +1,42 @@
+@startuml 1/pov-batch
+title Holder stores batches of signature validity proofs
+
+skinparam ParticipantPadding 150
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component(wallet, "Wallet")
+Component(verifier, "Verifier", "verifier")
+Component(issuer, "Issuer", "prover")
+
+group For i=0 to nb_of_proof
+    Rel(wallet, wallet, "Generate random for presentation = //r_Pres_i//")
+    Rel(wallet, wallet, "Generate random for signature validity proof = //r_PoV_i//")
+    Rel(wallet, wallet, "Randomize the signature<sub>Issuer</sub> with r_Pres_i and r_PoV_i = double_blind_signature_i<sub>Issuer</sub>")
+end
+
+Rel(wallet, issuer, "Get proof (double_blind_signature<sub>Issuer</sub>[nb_of_proof])")
+BiRel(wallet, issuer, "OIP (Oblivious Issuance Proof) protocol")
+Rel(issuer, wallet, "//blind_proof[nb_of_proof]//")
+
+group For i=0 to nb_of_proof
+    Rel(wallet, wallet, "Unblind //blind_proof_i// = //proof_i//")
+    Rel(wallet, wallet, "Craft //PoV_of_issuer_signature_i// with //proof_i//")
+    Rel(wallet, wallet, "Save //PoV_of_issuer_signature_i// and //r_Pres_i//")
+end
+
+== presentation ==
+Rel(verifier, wallet, "Presentation request")
+Rel(wallet, wallet, "Select one of pre-provisioned proof of signature validity = //PoV_of_issuer_signature// and //r_Pres//")
+Rel(wallet, wallet, "Blind the signature<sub>Issuer</sub> using //r_Pres// = blind_signature<sub>Issuer</sub>")
+Rel(wallet, verifier, "Send presentation(blind_signature<sub>Issuer</sub>) + //PoV_of_issuer_signature//")
+Rel(verifier, verifier, "check signature<sub>Issuer</sub> validity of attestation with //PoV_of_issuer_signature//")
+
+@enduml

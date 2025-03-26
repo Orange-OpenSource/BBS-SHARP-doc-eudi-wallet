@@ -1,0 +1,69 @@
+@startuml 1/blind-holder-ecsdsa-presentation
+title randomization during the presentation process - ECSchnorr
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+
+skinparam ParticipantPadding 120
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component_Ext(verifier, "Verifier")
+Component(wallet, "Wallet")
+Component(se, "WSCD")
+
+note over wallet
+| Public | <math>pk_(holder)=(g)^(sk_(holder))</math> |
+end note
+/note over se
+| Private | <math>sk_(holder) (ECSDSA)</math> |
+end note
+
+
+BiRel(verifier, wallet, "Presentation process")
+
+== Randomize holder public key ==
+Rel(wallet, wallet, "Generate random : r<sub>holder</sub>")
+Rel(wallet, wallet, "Compute blinded public key : pk_blind<sub>holder</sub>")
+note right wallet
+| Compute | <math>pk_(holder)^("blind") = (g)^(sk_(holder)+r_(holder))</math> |
+end note
+
+== Randomize attestation signature ==
+Rel(wallet, wallet, "Generate random : r<sub>issuer</sub>")
+Rel(wallet, wallet, "Refresh attestation issuer signature : signature_blind<sub>issuer</sub>")
+note right wallet
+| Compute | <math>signature_(issuer)^("blind") = signature_(issuer)(r_(issuer)) </math> |
+end note
+
+== Refresh attestation ==
+note right wallet
+| Refreshed attestation | holder key binding = <math>pk_(holder)^("blind")</math> \n attestation signature = <math>signature_(issuer)^("blind")</math> |
+end note
+Rel(wallet, wallet, "Generate attestation integrity ZKP = //attestation_integrity_ZKP//")
+
+== Generate presentation ==
+Rel(wallet, wallet, "Generate Presentation including the refreshed attestation = //presentation//")
+Rel(wallet, se, "sign //presentation//")
+Rel(se, se, "ECSDSA signature on //presentation// with sk<sub>holder</sub>")
+Rel(se, wallet, "signature<sub>holder</sub>")
+Rel(wallet, wallet, "compute blinded signature : signature_blind<sub>holder</sub>")
+note right wallet
+| Compute | <math>signature_(holder)^("blind") = signature_(holder) + c * r_(holder)</math> |
+end note
+Rel(wallet, wallet, "Generate key binding ZKP = //key_binding_ZKP//")
+
+== Share presentation to the verifier ==
+Rel(wallet, verifier, "//presentation// with signature_blind<sub>holder</sub>")
+note right verifier
+    presentation =  
+    | Refreshed attestation | holder key binding = <math>pk_(holder)^("blind")</math> \n attestation signature = <math>signature_(issuer)^("blind") + "attestation_integrity_ZKP"</math> |
+    presentation signature = <math>signature_(holder)^("blind") + "key_binding_ZKP"</math> 
+end note
+@enduml

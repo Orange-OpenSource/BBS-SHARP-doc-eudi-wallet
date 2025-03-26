@@ -1,0 +1,35 @@
+@startuml 1/pov-wallet
+title Holder requests a signature validity proofs on each presentation
+
+skinparam ParticipantPadding 100
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component(wallet, "Wallet")
+Component(verifier, "Verifier", "verifier")
+Component(issuer, "Issuer", "prover")
+
+Rel(verifier, wallet, "Presentation request")
+group #LightGrey State 
+    note over wallet
+        blind_signature<sub>Issuer</sub>
+    end note
+end group
+Rel(wallet, wallet, "Generate random for signature validity proof = //r_PoV//")
+Rel(wallet, wallet, "Randomize the blind_signature<sub>Issuer</sub> with r_PoV = double_blind_signature<sub>Issuer</sub>")
+Rel(wallet, issuer, "Get proof (double_blind_signature<sub>Issuer</sub>)")
+BiRel(wallet, issuer, "OIP (Oblivious Issuance Proof) protocol")
+Rel(issuer, wallet, "//blind_proof//")
+Rel(wallet, wallet, "unblind //blind_proof// = //proof//")
+Rel(wallet, wallet, "craft //PoV_of_issuer_signature// with //proof//")
+Rel(wallet, verifier, "Send presentation(blind_signature<sub>Issuer</sub>) + //PoV_of_issuer_signature//")
+Rel(verifier, verifier, "check blind_signature<sub>Issuer</sub> validity of attestation with //PoV_of_issuer_signature//")
+
+@enduml

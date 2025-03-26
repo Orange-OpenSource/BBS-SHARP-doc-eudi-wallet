@@ -1,0 +1,41 @@
+@startuml 1/key-anonymization-ecdsa
+title Holder public key and signature randomization - ECDSA
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component(wallet, "Wallet")
+Component(se, "WSCD")
+
+note over se
+| Public | <math>g, pk=(g)^(sk)</math> |
+| Private | <math>sk</math> |
+end note
+/note over wallet
+| Public | <math>(pk, g)</math> |
+end note
+
+Rel(wallet, wallet, "prepare //data// do sign")
+Rel(wallet, wallet, "generate random r")
+Rel(wallet, wallet, "precompute \n//dts// = M(//data//, r)")
+Rel(wallet, se, "sign dts")
+Rel(se, se, "make an ECDSA signature on dts using sk related to pk")
+Rel(se, wallet, "signature")
+
+Rel(wallet, wallet, "blind public key: pk<sup>blind</sup>")
+note right wallet
+| Compute | <math>pk^(bl i nd) = pk^r = (g)^(sk.r)</math> |
+end note
+Rel(wallet, wallet, "blind signature : signature<sup>blind</sup>")
+note over wallet
+<color:orange> **signature<sup>blind</sup>** </color>is an ECDSA signature on **data** that can be verified with <color:orange>**pk<sup>blind</sup>**</color>
+end note
+@enduml

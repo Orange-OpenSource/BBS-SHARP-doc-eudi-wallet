@@ -1,0 +1,42 @@
+@startuml 1/digest-commitment
+title Attestation generation with public values
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+!include <office/Users/user.puml>
+!include <office/Users/mobile_user.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Person(holder, "Holder")
+Component(wallet, "Wallet")
+Component_Ext(issuer, "Issuer")
+Component_Ext(verifier, "Verifier")
+
+== Initialization ==
+Rel(issuer, issuer, "initialize a BBS+ key pair and compute n public values randomly H<sub>i</sub>")
+Rel(issuer, issuer, "compute a public value randomly U")
+
+== Attestation presentation ==
+Rel(verifier, wallet, "initiate presentation (Presentation Definition)")
+Rel(holder, wallet, "select claims to disclose")
+alt the claim is not disclosed
+Rel(wallet, wallet, "replace the digest by public value U")
+Rel(wallet, wallet, "compute the commitment of the value and add the commitment to the signature")
+Rel(wallet, wallet, compute the SoK of the committed value and add the SoK to the signature")
+end alt
+Rel(wallet, wallet, "finish presentation process (assemble, sign, ...)")
+
+Rel(wallet, verifier, "send presentation")
+
+
+== Attestation verification ==
+Rel(verifier, verifier, "verify Holder signature")
+Rel(verifier, verifier, "verify Issuer signature")
+Rel(verifier, verifier, "check public values H<sub>i</sub> and U when validating disclosures/namespaces")
+
+@enduml

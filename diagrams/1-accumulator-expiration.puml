@@ -1,0 +1,29 @@
+@startuml 1/accumulator-expiration
+title Non-expiration proof with accumulators
+
+skinparam ParticipantPadding 100
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+Component(wallet, "Wallet")
+Component(verifier, "Verifier")
+Component(registry, "ExpiredDate registry", "Accumulator")
+
+BiRel(wallet, verifier, "presentation process")
+Rel(wallet, wallet, "Retrieve //witness// and //accumulatorState// stored with the attestation")
+Rel(wallet, wallet, "Update //witness// and //accumulatorState//")
+Rel(wallet, wallet, "Generate //nonExpirationZkp//")
+Rel(wallet, verifier, "Share presentation (//VP// + //nonExpirationZkp//)")
+Rel(verifier, registry, "Verify non-expiration ZKP (//nonExpirationZkp//)")
+Rel(registry, registry, "Verify //nonExpirationZkp//")
+Rel(registry, verifier, "nonExpirationValidityProof")
+Rel(verifier, verifier, "Verify //nonExpirationZkp// with //nonExpirationValidityProof//")
+
+@enduml

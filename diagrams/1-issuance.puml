@@ -1,0 +1,82 @@
+@startuml 1/issuance
+title Attestation issuance flow
+
+skinparam ParticipantPadding 100
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+skinparam useBetaStyle true
+<style>
+    sequenceDiagram {
+        participant {
+            BackgroundColor #85BBF0
+            FontStyle bold
+            LineColor #85BBF0
+        }
+        box {
+            LineColor lightgrey
+        }
+    }
+</style>
+
+actor "holder" as h
+
+box "WALLET ENV" #White
+    participant "Certified WSCD & \n access manager" as wscd
+    participant "Wallet" as w
+end box
+
+participant "Issuer" as i
+participant "Revocation & expiration registries" as reg
+
+group #LightGrey Initial state 
+    /note over wscd
+        <math>pk</math>&<math>sk_(holder)</math> (ECSDSA)
+    end note
+    /note over w
+        <math>"walletAttestation"</math>
+    end note
+    /note over i
+        <math>pk</math>&<math>sk_(issuer)</math> (BBS+)
+    end note
+end group
+
+== Wallet & User authentication ==
+Rel(w, w, "Generate Wallet attestation presentation \n= //wallet_attestation_presentation//" )
+Rel(w, wscd, "sign(//wallet_attestation_presentation//)")
+BiRel(h, wscd, "Auth")
+Rel(wscd, w, "//signature<sub>pk_holder</sub>//")
+Rel(w, i, "Authorize code flow with PAR \nwith client authentication based on //wallet_attestation_presentation//")
+Rel(i, i, "Verify wallet attestation")
+BiRel(i, h, "User auth / consent")
+Rel(i, w, "//auth_code//")
+Rel(w, i, "Get Token (//auth_code//) \nwith client authentication based on //wallet_attestation_presentation//")
+Rel(i, i, "Verify wallet attestation")
+Rel(i, w, "//token// + //nonce//")
+
+== Preparing Proof of Possession of sk<sub>holder</sub> (PoP_of_sk<sub>holder</sub>) ==
+Rel(w, w, "Build //PoP_data(nonce)//")
+Rel(w, wscd, "sign(//PoP_data//)")
+BiRel(h, wscd, "Auth")
+Rel(wscd, w, "//signature<sub>pk_holder</sub>//")
+Rel(w, w, "Craft //PoP_of_sk<sub>holder</sub>//")
+
+== Attestation issuance ==
+Rel(w, i, "Get attestation(//token// + //PoP_of_sk<sub>holder</sub>//")
+Rel(i, i, "Verify proofs")
+Rel(i, i, "Build attestation : \n- with WSCDs and Wallet references \n- with Id = Hash(//pk<sub>holder</sub>// + holder_salt) \n= //attestation//")
+Rel(i, i, "Sign //attestation// = signature<sub>pk_issuer</sub>")
+Rel(i, i, "Generate //PoV_of_issuer_signature//")
+BiRel(i, reg, "Build //revocation_registry_info// = //accumulator_state//, //witness// and ZKP : witness validity & attestation reference")
+BiRel(i, reg, "Build //expiration_registry_info// = //accumulator_state//, //witness// and ZKP : witness validity & attestation reference")
+Rel(i, w, "//attestation// with signature<sub>pk_issuer</sub> & //PoV_of_issuer_signature// + //revocation_registry_info// + //expiration_registry_info//")
+Rel(w, w, "Verify signature<sub>pk_issuer</sub> with //PoV_of_issuer_signature// & //witnesses// validity")
+Rel(w, w, "Store //attestation// + //accumulator_states// and //witnesses//")
+@enduml
