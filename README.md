@@ -7,8 +7,8 @@ This repository aims at documenting the security and privacy risks that could ar
 ## Structure
 | Chapter | Description | Status |
 |--|---|--|
-|[Introduction](./Trust-model-Introduction.md)| Description of the aims, structure and context of the repository |[![Version 1.0](https://img.shields.io/badge/Version-1.0-ff0288)](https://github.com/Orange-OpenSource/BBS-SHARP-doc-eudi-wallet/releases/tag/v1.0.0)|
-|[Privacy on credential presentation](./Trust-model-privacy-on-attestation-presentation.md) | This chapter describes the risks and critical solutions for ensuring the Holder's privacy when sharing Verifiable Credentials (attestations).| [![Version 1.0](https://img.shields.io/badge/Version-1.0-ff0288)](https://github.com/Orange-OpenSource/BBS-SHARP-doc-eudi-wallet/releases/tag/v1.0.0) |
+|[Introduction](./Trust-model-Introduction.md)| Description of the aims, structure and context of the repository |[![Version 1.0](https://img.shields.io/badge/Version-1.0-ff0288)](https://github.com/Orange-OpenSource/BBS-SHARP-doc-eudi-wallet/releases/tag/1.0.0)|
+|[Privacy on credential presentation](./Trust-model-privacy-on-attestation-presentation.md) | This chapter describes the risks and critical solutions for ensuring the Holder's privacy when sharing Verifiable Credentials (attestations).| [![Version 1.0](https://img.shields.io/badge/Version-1.0-ff0288)](https://github.com/Orange-OpenSource/BBS-SHARP-doc-eudi-wallet/releases/tag/1.0.0) |
 |Privacy on credential issuance and presentation | This chapter outlines supplementary risks and solutions essential for ensuring the Holder's privacy during the issuance and presentation of Verifiable Credentials (attestations).| In progress |
 |Other Important Features | This chapter explores supplementary mechanisms that can be implemented to enhance the overall security and privacy of the system, providing advanced features for a more robust digital identity framework. | In progress |
 
