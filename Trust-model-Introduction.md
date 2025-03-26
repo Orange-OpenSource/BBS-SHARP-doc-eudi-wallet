@@ -11,14 +11,13 @@ Trust Model: Securing digital identity with advanced cryptographic algorithms
 | SE     | (Secure element) is a secure operating system in a tamper-resistant secure component. |
 | ZKP    | (zero knowledge proof) is a protocol that enables one party to prove a statement to another party by only revealing that the statement is true and leaking no other information.|
 | SSI    | (Self Sovereign identity) is an approach to digital identity that gives individuals control over the information. |
-| SAM    | (Signature Activation Module) component in charge of activating and generating digital signatures using a cryptographic key that is stored in a secure element.|
-| HSM    | Hardware Security Module. A hardware Secure Cryptographic Device|
 | eIDAS  | (electronic Identification, Authentication and trust Services) |
 | Key Attestation | (Key attestation) is used in the process of verifying the authenticity and integrity of a cryptographic key. This process involves providing evidence that a key has been generated and stored in a secure manner, and has not been tampered with or compromised. |
 | App Attestation | App attestation is provided by the phone's operating system manufacturer to verify the authenticity of the app|
 | BBS#   | A protocol that maintains the anonymity properties of BBS+, including unlinkability and everlasting privacy, without using bilinear pairings, and only requires hardware implementation of established digital signature schemes like ECDSA or EdDSA.|
 | LoA-High | level of Assurance High is the highest level of assurance defined by eIDAS. It requires strong authentication methods, such as the use of cryptographic keys or biometric data, to verify the identity of the individual. LOA-High provides a high level of confidence in the authenticity of the user's identity, making it suitable for sensitive transactions and applications that require a high level of security. |
 | WSCD     | Wallet Secure Cryptographic Device. https://eu-digital-identity-wallet.github.io/eudi-doc-architecture-and-reference-framework/1.4.0/annexes/annex-1/annex-1-definitions/|
+| WUA   | Wallet Unit Attestation : attestation issued by the wallet provider, attesting the properties of the EUDI Wallet Instance. In this document, the WUA is also referred to as the Wallet Attestation.|
 | Commitments | Commitments are cryptographic constructs that allow a party to commit to the value of an information or a data to another party in an immutable way without revealing that data to the other party. |
 
 
@@ -58,20 +57,17 @@ This document is organized into three chapters:
 
 - **Privacy on credential presentation**:
 
-  This chapter describes the risks and critical solutions for ensuring the Holder's privacy when sharing Verifiable Credentials (attestations), 
-  with a focus on the essential requirements for secure and privacy-friendly digital identity management.
+  This chapter describes the risks and critical solutions for ensuring the Holder's privacy when sharing Verifiable Credentials (attestations), with a focus on the essential requirements for secure and privacy-friendly digital identity management.
 
 
 - **Privacy on credential issuance and presentation**: 
 
-  This chapter outlines supplementary risks and solutions essential for ensuring the Holder's privacy during the issuance and presentation of Verifiable Credentials, 
-  highlighting the significance of comprehensive privacy measures within the EUDI Wallet framework.
+  This chapter outlines supplementary risks and solutions essential for ensuring the Holder's privacy during the issuance and presentation of Verifiable Credentials, highlighting the significance of comprehensive privacy measures within the EUDI Wallet framework.
 
 
 - **Advanced Features**: 
   
-  This chapter explores additional mechanisms that can be implemented to strengthen the overall security and privacy of the system, 
-  offering advanced features for a more resilient digital identity framework.
+  This chapter explores additional mechanisms that can be implemented to strengthen the overall security and privacy of the system, offering advanced features for a more resilient digital identity framework.
 
 ## Structure of chapters
 All chapters are organized to tackle privacy and security concerns within the context of the ARF<sup>[[01](#references)]</sup> framework.

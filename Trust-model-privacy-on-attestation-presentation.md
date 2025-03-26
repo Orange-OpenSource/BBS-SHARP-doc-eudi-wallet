@@ -11,8 +11,8 @@ These additional mechanisms will be discussed in subsequent chapters.
 # Table of Contents
 - [1. Privacy and security challenges](#1-privacy-and-security-challenges)
   - [1.1. WSCDs and wallet binding](#11-wscds-and-wallet-binding)
-    - [1.1.1. Cascade revocation in case of WSCD compromise](#111-cascade-revocation-in-case-of-wscd-compromise)
-    - [1.1.2. Cascade revocation in case of loss, theft... of the wallet](#112-cascade-revocation-in-case-of-loss-theft-of-the-wallet)
+    - [1.1.1. Implied revocation in case of WSCD compromise](#111-implied-revocation-in-case-of-wscd-compromise)
+    - [1.1.2. Implied revocation in case of loss, theft... of the wallet](#112-implied-revocation-in-case-of-loss-theft-of-the-wallet)
   - [1.2. Attestation issuance](#12-attestation-issuance)
     - [1.2.1. Attestation identifier managed by the Issuer](#121-attestation-identifier-managed-by-the-issuer)
   - [1.3. Attestation presentation](#13-attestation-presentation)
@@ -60,14 +60,14 @@ In the context of the European Digital Identity Wallet, privacy and security are
 
 ## 1.1. WSCDs and wallet binding
 
-### 1.1.1. Cascade revocation in case of WSCD compromise
+### 1.1.1. Implied revocation in case of WSCD compromise
 In the event of a WSCD compromise, all attestations issued and bound to a Holder public key managed by the WSCD must be invalidated. 
 The process of revoking these attestations necessitates notifying all Issuers, who must then implement the attestation revocation based on the WSCD identifier. 
 This workflow involves multiple actors and requires validation of the Issuer's implementation. 
 
 Therefore, this approach is not considered robust.
 
-### 1.1.2. Cascade revocation in case of loss, theft... of the wallet 
+### 1.1.2. Implied revocation in case of loss, theft... of the wallet 
 In this case, the Wallet instance is compromised. 
 In the event of a Wallet instance compromise, all attestations issued and bound to a Holder public key managed by the Wallet instance must be invalidated.
 The process of revoking these attestations necessitates notifying all Issuers, who must then implement the attestation revocation based on the Wallet instance identifier.
@@ -423,8 +423,8 @@ thereby minimizing the number of interactions required between the Holder and th
 
 The goal of this directive is to include the WSCD reference and Wallet-Instance identifier reference in all issued attestations.
 This inclusion is essential for enabling:
-* [cascade revocation in case of WSCD compromise](#111-cascade-revocation-in-case-of-wscds-compromise) 
-* [cascade revocation in case of loss or theft of the Wallet](#112-cascade-revocation-in-case-of-loss-theft-of-the-wallet).
+* [Implied revocation in case of WSCD compromise](#111-implied-revocation-in-case-of-wscds-compromise) 
+* [Implied revocation in case of loss or theft of the Wallet](#112-implied-revocation-in-case-of-loss-theft-of-the-wallet).
 
 
 The WSCD reference and the Wallet-Instance identifier can be retrieved from the Wallet Attestation 
@@ -446,9 +446,9 @@ The Wallet Attestation, similar to any other attestation, leverages BBS# mechani
 **Note:**
 Wallet Attestation anonymization during the issuance process is not described in this document.
 
-Including the WSCD reference and the Wallet-Instance identifier in all issued attestations facilitates cascade revocation features:
+Including the WSCD reference and the Wallet-Instance identifier in all issued attestations facilitates implied revocation features:
 
-### Protection against Wallet loss or theft.
+### Protection against Wallet loss or theft
 During the presentation process, 
 the Verifier must ensure that the Wallet-Instance identifier referenced in the attestation is not revoked by the Wallet Provider.
 Actually for privacy compliance, the Holder shall provide a proof (ZKP) demonstrating that the Wallet-Instance is not revoked.
@@ -513,8 +513,8 @@ By mapping the risks to the corresponding mechanisms, this chapter offers a clea
 
 | Risks \ Mechanims|[Static UD. digest](#21-static-undisclosed-digest) |[Digest salt](#22-digest-calculation-without-salt) |[Id calculation](#23-attestation-identifier-computation) |[Randomization during presentation](#24-holder-public-key-and-issuer-signature-randomization-during-the-presentation-process) |[Non exp. proof](#251-non-expiration-proof-with-accumulators) |[Non revoc. proof](#252-non-revocation-proof-with-accumulators) |[Wallet & Wscd reference](#26-wallet-and-wscds-references-in-attestations) |
 |-------------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| [cascade revocation (WSCDs)](#111-cascade-revocation-in-case-of-wscds-compromise)                                                                   | | | | | | |:white_check_mark:|
-| [cascade revocation (wallet)](#112-cascade-revocation-in-case-of-loss-theft-of-the-wallet)                                                          | | | | | | |:white_check_mark:|
+| [Implied revocation (WSCDs)](#111-implied-revocation-in-case-of-wscds-compromise)                                                                   | | | | | | |:white_check_mark:|
+| [Implied revocation (wallet)](#112-implied-revocation-in-case-of-loss-theft-of-the-wallet)                                                          | | | | | | |:white_check_mark:|
 | [Attestation identifier](#121-attestation-identifier-managed-by-the-issuer)                                                                         | | |:white_check_mark:| | | | |
 | [Presentation: linkability by Verifiers](#131-holder-tracking-via-holders-public-elements-and-signatures-by-verifiers)                             | | | |:white_check_mark:|:white_check_mark:| | |
 | [Presentation: linkability via collusion](#132-holder-tracking-via-holders-public-elements-and-signatures-in-case-of-verifier-and-issuer-collusion)| | | |:white_check_mark:| | | |
