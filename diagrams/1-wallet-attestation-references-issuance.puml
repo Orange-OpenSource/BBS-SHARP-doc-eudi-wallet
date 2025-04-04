@@ -21,7 +21,7 @@ Component(issuer, "Issuer")
 == Wallet Onboarding ==
 BiRel(walletp, wallet, "Provide a wallet attestation to the holder")
 note over wallet
-| WalletAttestation | id=//wallet_attestation_id// \n wscd=//holder_secret_WSCD_reference// |
+| WalletAttestation | <math> [["id=wallet_attestation_id"],["wscd=holder_secret_WSCD_reference"]]</math> |
 | Signature | <math>signature_("wallet provider")</math> |
 end note
 
@@ -29,7 +29,7 @@ end note
 Rel(wallet, wallet, "Generate and sign //wallet_attestation_presentation//")
 note over wallet
 presentation =
-| WalletAttestation | id=//wallet_attestation_id// \n wscd=//holder_secret_WSCD_reference// |
+| WalletAttestation | <math> [["id=wallet_attestation_id"],["wscd=holder_secret_WSCD_reference"]]</math> |
 | Signature | <math>signature_("wallet provider")</math> |
 presentation signature = <math>signature_(holder)</math> 
 end note
@@ -40,9 +40,9 @@ Rel(wallet, issuer, "Get attestation (//PoP//)")
 Rel(issuer, issuer, "Check the link between //PoP// <-> //WalletAttestation//")
 Rel(issuer, issuer, "Generate //attestation//")
 note over issuer
-| Attestation | claims1=//digest_claims1//, ... , \n walletAttestationId=//wallet_attestation_id//, \n wscd=//holder_secret_WSCD_reference// |
+| Attestation | <math> [["claims1=digest_claims1, ... , "],["walletAttestationId=wallet_attestation_id"],["wscd=holder_secret_WSCD_reference"]]</math> |
 | Signature | <math>signature_("issuer")</math> |
-| Disclosures | //disclosure_of_claims1//, ... |
+| Disclosures | <math>"disclosure_of_claims1, ..."</math> |
 end note
 Rel(issuer, wallet, "Attestation")
 

@@ -1,5 +1,5 @@
 @startuml 1/zkp-attestation
-title Description of attestation signature
+title Description of the attestation Issuer's signature
 
 !include <c4/C4_Context.puml>
 !include <c4/C4_Container.puml>
@@ -9,13 +9,19 @@ title Description of attestation signature
 HIDE_STEREOTYPE()
 
 
-Component_Ext(signature, "Attestation signature", "") {
+Component_Ext(signature, "Attestation Signature", "") {
     Component(proof1, "Randomized attestation issuer signature", "blind_signature<sub>issuer</sub>")
     Component(proof2, "Proof of the attestation integrity", "attestation_integrity_ZKP")
     Component(proof3, "Proof of attestation non-revocation", "non_attestation_revocation_zkp")
     Component(proof4, "Proof of attestation non-expiration", "non_attestation_expiration_zkp")
     Component(proof5, "Proof of non-revocation of the WSCD referenced in the attestation", "non_WSCD_revocation_zkp")
     Component(proof6, "Proof of non-revocation of the Wallet referenced in the attestation", "non_wallet_attestation_revocation_zkp")
+
+    Lay_R(proof1, proof2)
+    Lay_D(proof1, proof3)
+    Lay_R(proof3, proof4)
+    Lay_R(proof5, proof6)
+    Lay_D(proof4, proof5)
 }
 @enduml
 

@@ -1,5 +1,5 @@
 @startuml 1/zkp-key-binding
-title Description of presentation signature
+title Description of the presentation Holder's signature
 
 !include <c4/C4_Context.puml>
 !include <c4/C4_Container.puml>
@@ -9,9 +9,9 @@ title Description of presentation signature
 HIDE_STEREOTYPE()
 
 
-Component_Ext(signature, "Presentation signature", "") {
-    Component(proof1, "Randomized presentation holder signature", "blind_signature<sub>holder</sub>")
-    Component(proof2, "Proof of the key binding", "key_binding_ZKP")
+Component_Ext(signature, "Presentation Signature", "") {
+    Component(proof1, "Proof of the key binding", "key_binding_ZKP")
+    Component(proof2, "Randomized presentation holder signature", "blind_signature<sub>holder</sub>")
 }
 @enduml
 

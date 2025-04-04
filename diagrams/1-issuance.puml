@@ -1,7 +1,7 @@
 @startuml 1/issuance
 title Attestation issuance flow
 
-skinparam ParticipantPadding 100
+'skinparam ParticipantPadding 100
 
 !include <c4/C4_Context.puml>
 !include <c4/C4_Container.puml>
@@ -28,13 +28,15 @@ skinparam useBetaStyle true
 
 actor "holder" as h
 
+skinparam SequenceBoxBorderColor grey
+
 box "WALLET ENV" #White
     participant "Certified WSCD & \n access manager" as wscd
     participant "Wallet" as w
 end box
 
 participant "Issuer" as i
-participant "Revocation & expiration registries" as reg
+participant "Revocation & expiration \n registries" as reg
 
 group #LightGrey Initial state 
     /note over wscd
