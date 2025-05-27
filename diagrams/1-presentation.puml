@@ -43,7 +43,7 @@ participant "Expiration \n date registry" as exp
 
 group #LightGrey Initial state 
     /note over wscd
-        <math>pk</math>&<math>sk_(holder)</math> (ECSDSA)
+        <math>pk</math>&<math>sk_(holder)</math> (ECDSA)
     end note
     /note over w
         <math>"Attestation"</math>

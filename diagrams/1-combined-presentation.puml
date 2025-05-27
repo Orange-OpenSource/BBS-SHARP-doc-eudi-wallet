@@ -1,0 +1,72 @@
+@startuml 1/combined-presentation
+title Combined presentation of attestations flow
+
+!include <c4/C4_Context.puml>
+!include <c4/C4_Container.puml>
+!include <c4/C4_Component.puml>
+!include <c4/C4_Dynamic.puml>
+!include <c4/C4_Sequence.puml>
+
+skinparam ParticipantPadding 120
+
+HIDE_STEREOTYPE()
+autonumber "<b>[00] - "
+
+skinparam useBetaStyle true
+<style>
+    sequenceDiagram {
+        participant {
+            BackgroundColor #85BBF0
+            FontStyle bold
+            LineColor #85BBF0
+        }
+        box {
+            LineColor lightgrey
+        }
+    }
+</style>
+
+actor "holder" as h
+
+skinparam SequenceBoxBorderColor grey
+
+box "WALLET ENV" #White
+    participant "WSCD" as wscd
+    participant "Wallet" as w
+end box
+
+participant "Verifier" as v
+
+group #LightGrey Initial state 
+    /note over wscd
+        <math>pk</math>&<math>sk_(holder)</math> (ECDSA)
+    end note
+    /note over w
+        <math>"Attestations"</math>
+    end note
+end group
+
+Rel(v, w, "Presentation request(//nonce//)")
+Rel(w, w, "Generate random for holder pk = //r_holder//")
+Rel(w, w, "Randomize //pk<sub>holder</sub>// with //r_holder// = //pk_blind<sub>holder</sub>//")
+
+loop on presented attestations
+    Rel(w, w, "Generate random for issuer signature = //r_issuer//")
+    Rel(w, w, "Randomize the attestation issuer signature with //r_issuer// = //blind_signature<sub>issuer</sub>//")
+    Rel(w, w, "Refresh attestation with //pk_blind<sub>holder</sub>// = //refreshed_attestation// and generate the attestation integrity proof")
+    Rel(w, w, "Generate non-revocation and non-expiration proofs")
+end loop
+
+== Craft the presentation ==
+Rel(w, w, "Craft the //presentation// including the list of //refreshed_attestation// and the //nonce//")
+Rel(w, wscd, "sign //presentation//")
+BiRel(h, wscd, "Auth")
+Rel(wscd, w, "//signature<sub>holder</sub>//")
+Rel(w, w, "Randomize the //signature<sub>holder</sub>// with //r_holder// = //blind_signature<sub>holder</sub>//")
+Rel(w, w, "Generate key binding proof = //key_binding_ZKP//")
+
+== Share the presentation ==
+Rel(w, v, "//presentation// with //blind_signature<sub>holder</sub>//")
+Rel(v, v, "Verify proofs")
+
+@enduml

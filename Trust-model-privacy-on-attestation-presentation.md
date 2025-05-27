@@ -1,7 +1,7 @@
 Trust Model: Privacy on attestations presentation
 ===
 
-**Version:** 1.0
+**Version:** 1.1
 
 # Chapter context
 This chapter focuses on the requirements essential for the Verifiable Credentials (attestations) presentation process, outlining the associated risks and the mechanisms implemented to eliminate or mitigate these challenges.
@@ -9,6 +9,8 @@ In addition to the mechanisms for the presentation process, supplementary mechan
 These additional mechanisms will be discussed in subsequent chapters.
 
 # Table of Contents
+<!-- TOC tocDepth:1..3 chapterDepth:1..3 -->
+
 - [1. Privacy and security challenges](#1-privacy-and-security-challenges)
   - [1.1. WSCDs and Wallet binding](#11-wscds-and-wallet-binding)
     - [1.1.1. Implied revocation in case of WSCD compromise](#111-implied-revocation-in-case-of-wscd-compromise)
@@ -37,7 +39,7 @@ These additional mechanisms will be discussed in subsequent chapters.
     - [2.5.1 Non-expiration proof with accumulators](#251-non-expiration-proof-with-accumulators)
     - [2.5.2 Non-revocation proof with accumulators](#252-non-revocation-proof-with-accumulators)
   - [2.6 Wallet instance identifier and WSCD references in attestations](#26-wallet-instance-identifier-and-wscd-references-in-attestations)
-    - [Protection against Wallet loss or theft.](#protection-against-wallet-loss-or-theft)
+    - [Protection against Wallet loss or theft](#protection-against-wallet-loss-or-theft)
     - [Protection against WSCD breach](#protection-against-wscd-breach)
     - [2.6.1 Wallet-identifier and WSCD-reference in attestations during issuance process](#261-wallet-identifier-and-wscd-reference-in-attestations-during-issuance-process)
     - [2.6.2 Wallet-identifier and WSCD-reference in attestations during presentation process](#262-wallet-identifier-and-wscd-reference-in-attestations-during-presentation-process)
@@ -45,14 +47,17 @@ These additional mechanisms will be discussed in subsequent chapters.
 - [4. BBS# implementation in SSI flows](#4-bbs-implementation-in-ssi-flows)
   - [4.1 Validation of transaction when not using pairing](#41-validation-of-transaction-when-not-using-pairing)
     - [4.1.1 Holder requests a signature validity proofs on each presentation](#411-holder-requests-a-signature-validity-proofs-on-each-presentation)
-    - [4.1.2 Verifier obtain the signature validity proofs from the Issuer](#412-verifier-obtain-the-signature-validity-proofs-from-the-issuer)
+    - [4.1.2 Verifier obtains the signature validity proofs from the Issuer](#412-verifier-obtains-the-signature-validity-proofs-from-the-issuer)
     - [4.1.3 Holder stores batches of signature validity proofs](#413-holder-stores-batches-of-signature-validity-proofs)
     - [4.1.4 DDoS protection of Issuer's proof-of-validity APIs](#414-ddos-protection-of-issuers-proof-of-validity-apis)
   - [4.2 Attestation issuance flow](#42-attestation-issuance-flow)
   - [4.3 Attestation presentation flow](#43-attestation-presentation-flow)
-  - [4.4 Description of proofs during presentation](#44-description-of-proofs-during-presentation)
-    - [4.4.1 Description of the attestation signature](#441-description-of-the-attestation-signature)
-    - [4.4.1 Description of the presentation signature](#441-description-of-the-presentation-signature)
+  - [4.4 Combined presentation of attestations flow](#44-combined-presentation-of-attestations-flow)
+  - [4.5 Description of proofs during presentation](#45-description-of-proofs-during-presentation)
+    - [4.5.1 Description of the attestation signature](#451-description-of-the-attestation-signature)
+    - [4.5.1 Description of the presentation signature](#451-description-of-the-presentation-signature)
+
+<!-- /TOC -->
 
 
 # 1. Privacy and security challenges
@@ -351,14 +356,14 @@ Joint computation of blind_pk<sub>Holder</sub> and blind_signature<sub>Holder</s
 Below, we explain how the WSCD and the associated Wallet application can jointly randomization the public key blind_pk<sub>Holder</sub> 
 and calculate the anonymized blind_signature<sub>Holder</sub>.
 
-Joint computation of blind_pk<sub>Holder</sub> and blind_signature<sub>Holder</sub> with EC-SDSA (ECSchnorr):
+Joint computation of blind_pk<sub>Holder</sub> and blind_signature<sub>Holder</sub> with ECDSA :
 
-![Joint computation of blind_pk<sub>Holder</sub> and blind_signature<sub>Holder</sub> with EC-SDSA (ECSchnorr)](./media/1/key-anonymization-ecdsa.png)
+![Joint computation of blind_pk<sub>Holder</sub> and blind_signature<sub>Holder</sub> with ECDSA](./media/1/key-anonymization-ecdsa.png)
 
 
 > **Note** : In the remainder of this document, 
 > the discussion and examples will be presented using EC-SDSA as the signature algorithm. 
-> However, as previously indicated, the reasoning and principles outlined can also be applied to ECDSA.**
+> However, as previously indicated, the reasoning and principles outlined can also be applied to ECDSA.
 
 
 ### 2.4.2 Issuer signature randomization during the presentation process
@@ -389,8 +394,8 @@ Assumptions:
   - The Holder knows a public key (**pk<sub>holder</sub>**) and a random value (**r<sub>holder</sub>**) such that applying **r<sub>holder</sub>** to **pk<sub>holder</sub>** results in **pk_blind<sub>holder</sub>**
   - The Holder knows a signature (**signature<sub>issuer</sub>**) and a random value (**r<sub>issuer</sub>**) such that applying **r<sub>issuer</sub>** to **signature<sub>issuer</sub>** results in **signature_blind<sub>issuer</sub>**
   - The blinded Issuer signature **signature_blind<sub>issuer</sub>** relates to the attestation data, which includes the blinded Holder public key **pk_blind<sub>holder</sub>**
-- [08-10]: The Wallet crafts the presentation for the Verifier and signs it using their WSCD. The **signature<sub>holder</sub>** is an ECSDSA signature on the **Presentation** that can be verified with **pk<sub>holder</sub>**.
-- [11]: The Wallet anonymizes the signature to get a signature that can be verified with the blinded Holder's public key, previously generated. The **signature_blind<sub>holder</sub>** is an ECSDSA signature on the **Presentation** that can be verified with **pk_blind<sub>holder</sub>**.
+- [08-10]: The Wallet crafts the presentation for the Verifier and signs it using their WSCD. The **signature<sub>holder</sub>** is an EC-SDSA signature on the **Presentation** that can be verified with **pk<sub>holder</sub>**.
+- [11]: The Wallet anonymizes the signature to get a signature that can be verified with the blinded Holder's public key, previously generated. The **signature_blind<sub>holder</sub>** is an EC-SDSA signature on the **Presentation** that can be verified with **pk_blind<sub>holder</sub>**.
 - [12]: The Wallet generates a zero-knowledge proof (ZKP) called **key_binding_ZKP** to prove that the Holder knows a  **sk_blind<sub>holder</sub>** associated to **pk_blind<sub>holder</sub>**.
 - [13]: The Wallet sends the presentation to the Verifier, who can verify it.
 
@@ -744,7 +749,7 @@ Below is a non-normative example of a JWT proof-of-possession of the Holder's se
   "nonce": "<nonce>"
 }
 ```
-- [13-17]: The Wallet sends the PoP_data to the certified WSCD (e.g., HSM) to be signed with the Holder's private key. The generated **signature<sub>pk_holder</sub>** is an ECDSA signature on the **PoP_data**, which can be verified using **pk<sub>older</sub>**. The Wallet then crafts the proof-of-possession of the Holder's secret and sends it to the Issuer, along with the previously retrieved token, to obtain the requested attestation.
+- [13-17]: The Wallet sends the PoP_data to the certified WSCD (e.g., HSM) to be signed with the Holder's private key. The generated **signature<sub>pk_holder</sub>** is an EC-SDSA signature on the **PoP_data**, which can be verified using **pk<sub>older</sub>**. The Wallet then crafts the proof-of-possession of the Holder's secret and sends it to the Issuer, along with the previously retrieved token, to obtain the requested attestation.
 - [18]: The Issuer verifies the validity of the proof-of-possession of the Holder's secret and checks that this proof corresponds to the **wallet_attestation_presentation** shared with the Issuer during the client authentication process. Both elements must refer to the same **sk<sub>holder</sub>** to demonstrate that the attestation request originates from the same Wallet previously authenticated.
 - [19-21]: The Issuer crafts the attestation according to our Trust Model requirements, including 
   - the computation of the attestation identifier (for more details, refer to the chapter [Attestation Identifier Computation](#23-attestation-identifier-computation)) 
@@ -875,10 +880,9 @@ The Wallet then blinds the signature to obtain a signature that can be verified 
 (for more details on the randomization process, refer to the chapter [Holder Public key and Issuer signature randomization during the presentation process](#24-holder-public-key-and-issuer-signature-randomization-during-the-presentation-process)).
 
 Below is a non-normative example of the verifiable presentation in SD-JWT format:
-
 ```
 - Credential:
-<refreshed_attestation> \\@see step 18
+  <refreshed_attestation> \\@see step 18
 - Key binding payload:
 {
   "nonce": "1234567891",
@@ -896,13 +900,48 @@ Three options are available to retrieve the proof-of-validity of the Issuer sign
 In this flow, the Verifier obtains the signature validity proofs from the Issuer (for more details on the three options, refer to the chapter [Validation of transaction when not using pairing](#41-validation-of-transaction-when-not-using-pairing)).
 
 
-## 4.4 Description of proofs during presentation
+## 4.4 Combined presentation of attestations flow
+This chapter delves into the combined presentation flow, illustrating how BBS# enables the presentation of multiple attestations in a single presentation. The concept of combined presentation refers to a process where a Relying Party requests multiple attributes concerning a single User, drawn from separate attestations, and receives a consolidated response. The key functional goal is to allow the Relying Party to confirm that all presented attributes genuinely pertain to the same User without compromising trust, privacy, or data integrity.
+
+The BBS# protocol does not require any adaptations or special mechanisms to enable this feature, as the Holder's public key referenced in all presented attestations is randomized using the same value. Consequently, the randomized Holder's public key remains consistent across all attestations included in the presentation, facilitating easy confirmation that all presented attestations are linked to the same user.
+
+The following sequence diagram illustrates the sequence presented in the previous chapter on [Attestation presentation flow](#43-attestation-presentation-flow), adapting the examples to a combined presentation use case:
+
+![ Combined presentation of attestations flow](./media/1/combined-presentation.png)
+
+**Flow description**
+- [01]: During the initial phase of the presentation process protocol, the Wallet receives the Verifier's request. These steps are not detailed in this context; for more information, refer to the OpenID4VP specification<sup>[[05](./Trust-model-Introduction.md#references)]</sup>.
+- [02-03]: The Wallet generates a random value, **r_holder**, and uses it to randomize the **pk<sub>holder</sub>**. The result of this randomization is referred to as **pk_blind<sub>holder</sub>**, which will be used to refresh all attestations included in this presentation. By using the same Holder's public key across all presented attestations, the Verifier can confirm that all attestations provided in the presentation are bound to the same Holder's key, and thus to the same user.
+- [04-07]: For each presented attestation, the Wallet refreshes the attestation and generates the required proofs. For more details on these steps, see the previous chapter on [Attestation Presentation Flow](#43-attestation-presentation-flow). A new random value, **r_issuer**, is used to randomize each attestation to ensure the everlasting privacy of the transaction. At the end of these steps, the wallet gets a list of **refreshed_attestation**.
+- [08-13]: The Wallet generates the presentation, which includes the list of **refreshed_attestations**, and creates the Holder binding proof. 
+
+Below is a non-normative example of the combined verifiable presentation in SD-JWT format:
+
+```
+- Credentials:
+  <refreshed_attestation1> \\bound to PK_blind_holder
+  <refreshed_attestation2> \\bound to PK_blind_holder
+  <refreshed_attestation...> \\bound to PK_blind_holder
+- Key binding payload:
+{
+  "nonce": "1234567891",
+  "aud": "https://example.com/verifier",
+  "iat": 1733230141,
+  "sd_hash": "HVV0BpnEL....Z5V8"
+}
+- Key binding signature:
+  <blind_signature_holder>+<key_binding_zkp>
+```
+- [14-15]: The Wallet sends the presentation to the Verifier, who can then verify its authenticity and its validity.
+
+
+## 4.5 Description of proofs during presentation
 To maintain compatibility with standard formats, we incorporate all additional proofs generated by the BBS# mechanisms
 into the signatures of the attestation and presentation. 
 These proofs are essential for ensuring privacy while adhering to established standards.
 To fully understand all the elements that compose the signature, it is necessary to describe the format in detail.
 
-### 4.4.1 Description of the attestation signature
+### 4.5.1 Description of the attestation signature
 The following diagram illustrates the content of the **attestation signature** during the presentation process:
 
 ![Attestation signature description](./media/1/zkp-attestation.png)
@@ -952,7 +991,7 @@ This proof relies on an accumulator that contains all identifiers of revoked Wal
 By proving that the Wallet-identifier is not included in this list, it is confirmed that the Wallet used by the Holder to store and share the attestation remains valid. 
 Since the accumulators are pairing-free, the proof must be presented to the accumulator owner for verification in exchange for a non-revocation-validity-proof.
 
-### 4.4.1 Description of the presentation signature
+### 4.5.1 Description of the presentation signature
 The following diagram illustrates the content of the **presentation signature** field during the presentation process:
 
 ![Presentation signature description](./media/1/zkp-key-binding.png)

@@ -40,7 +40,7 @@ participant "Revocation & expiration \n registries" as reg
 
 group #LightGrey Initial state 
     /note over wscd
-        <math>pk</math>&<math>sk_(holder)</math> (ECSDSA)
+        <math>pk</math>&<math>sk_(holder)</math> (ECDSA)
     end note
     /note over w
         <math>"walletAttestation"</math>
